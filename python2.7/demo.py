@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 """
-Created by bu on 2018-01-17
+Created by bu on 2018-01-17 , updated by siracoos on 2023-07-25
 """
 from __future__ import unicode_literals
 import time
@@ -34,7 +34,7 @@ class RequestClient(object):
         data = []
         for item in sort_params:
             data.append(item + '=' + str(params[item]))
-        str_params = "{0}&secret_key={1}".format('&'.join(data), secret_key)
+        str_params = "{0}&secret_key={1}".format('&'.join(data), secret_key).encode()
         token = hashlib.md5(str_params).hexdigest().upper()
         return token
 
@@ -59,8 +59,8 @@ class RequestClient(object):
 
 def get_account():
     request_client = RequestClient()
-    response = request_client.request('GET', '{url}/v1/balance/'.format(url=request_client.url))
-    print response.status
+    response = request_client.request('GET', '{url}/v1/balance/info'.format(url=request_client.url))
+    print (response.data)
 
 
 def order_pending(market_type):
@@ -73,7 +73,7 @@ def order_pending(market_type):
             '{url}/v1/order/pending'.format(url=request_client.url),
             params=params
     )
-    print response.content
+    print (response.content)
 
 
 def order_finished(market_type, page, limit):
@@ -88,7 +88,7 @@ def order_finished(market_type, page, limit):
             '{url}/v1/order/finished'.format(url=request_client.url),
             params=params
     )
-    print response.status
+    print (response.status)
 
 
 def put_limit():
@@ -122,7 +122,7 @@ def put_market():
             '{url}/v1/order/market'.format(url=request_client.url),
             json=data,
     )
-    print response.content
+    print (response.content)
 
 
 def cancel_order(id, market):
@@ -131,7 +131,7 @@ def cancel_order(id, market):
         "id": id,
         "market": market,
     }
-    print market
+    print (market)
 
     response = request_client.request(
             'DELETE',
@@ -150,9 +150,9 @@ if __name__ == '__main__':
         id = order_data['id']
         market = order_data['market']
         cancel_order(id, market)
-        print time.time() * 1000 - b
+        print (time.time() * 1000 - b)
         count += 1
         if count >= 50:
             break
 
-    print 'avg', (time.time() * 1000 - a) / 50.0
+    print ('avg', (time.time() * 1000 - a) / 50.0)
